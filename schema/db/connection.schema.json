@@ -1,0 +1,254 @@
+{
+  "$defs": {
+    "Engine": {
+      "enum": [
+        "postgres",
+        "sqlite",
+        "mysql",
+        "mariadb",
+        "duckdb",
+        "sqlserver"
+      ],
+      "type": "string"
+    },
+    "KubernetesConfig": {
+      "additionalProperties": false,
+      "description": "The cluster resource a connection reaches through `kubectl port-forward` (ADR-015).",
+      "properties": {
+        "context": {
+          "description": "Context of the kubeconfig; its current context when absent.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kubeconfig": {
+          "description": "A kubeconfig file instead of the default one (`KUBECONFIG` or `~/.kube/config`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kubectl": {
+          "description": "The `kubectl` executable; `kubectl` on the PATH when absent.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "namespace": {
+          "description": "The context's namespace when absent.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resource": {
+          "description": "`svc/<name>`, `pod/<name>` or `deployment/<name>`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "McpConfig": {
+      "additionalProperties": false,
+      "description": "What an agent can do with this connection (ADR-008).",
+      "properties": {
+        "exposed": {
+          "default": false,
+          "description": "Visible to agents. Off by default.",
+          "type": "boolean"
+        },
+        "max_rows": {
+          "description": "Maximum rows per response.",
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "writes": {
+          "$ref": "#/$defs/WritePolicy",
+          "default": "deny",
+          "description": "What agents may do (ADR-019): `deny` (read only, the default) or `allow` (writes\nthrough `execute_write`). `confirm` is not supported yet."
+        }
+      },
+      "type": "object"
+    },
+    "SecretSpec": {
+      "additionalProperties": false,
+      "description": "Reference to a secret. Accepted forms:\n`keychain`, `keychain:<name>`, `env:<VARIABLE>`, `op://<vault>/<item>/<field>`,\n`cmd:<command>` and `prompt` (asked when connecting).",
+      "properties": {
+        "secret": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "secret"
+      ],
+      "type": "object"
+    },
+    "TlsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "ca": {
+          "description": "Certificate (PEM) of the authority, relative to the repository root or with `~/`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cert": {
+          "description": "Client certificate (PEM) to log in without a password (ADR-022): PostgreSQL, MySQL and\nMariaDB. Relative to the repository root or with `~/`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "key": {
+          "description": "Private key (PEM) of the client certificate. Never inside the repository: `~/…`, an\nabsolute path or a `${user.…}` variable.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mode": {
+          "$ref": "#/$defs/TlsModeConfig",
+          "default": "prefer"
+        }
+      },
+      "type": "object"
+    },
+    "TlsModeConfig": {
+      "description": "Same names as libpq's `sslmode`.",
+      "enum": [
+        "disable",
+        "prefer",
+        "require",
+        "verify-ca",
+        "verify-full"
+      ],
+      "type": "string"
+    },
+    "WritePolicy": {
+      "enum": [
+        "deny",
+        "confirm",
+        "allow"
+      ],
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A connection: `.spelaion/connections/<folders>/<id>.toml`.",
+  "properties": {
+    "database": {
+      "description": "Database; for SQLite and DuckDB, the file path (relative to the repository root).",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "engine": {
+      "$ref": "#/$defs/Engine"
+    },
+    "env": {
+      "description": "Environment label (`dev`, `staging`, `prod`…). `prod` tightens the MCP permissions.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "host": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kubernetes": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KubernetesConfig"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Reach the database with `kubectl port-forward` to a resource of a cluster (ADR-015):\n`port` is then the resource's port and `host` is only the name TLS checks."
+    },
+    "mcp": {
+      "$ref": "#/$defs/McpConfig"
+    },
+    "name": {
+      "description": "Display name. If missing, the identifier (the file path) is used.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "password": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SecretSpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Reference to the secret, never the value: `{ secret = \"keychain\" }`."
+    },
+    "port": {
+      "format": "uint16",
+      "maximum": 65535,
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "read_only": {
+      "description": "Open read-only (native in SQLite).",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "description": "Format version of this file.",
+      "format": "uint32",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "sqlite3": {
+      "description": "SQLite with a tunnel: the file is on the tunnel's last hop, opened by its `sqlite3`\n(ADR-018); this names that program when it is not `sqlite3` on the PATH.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tls": {
+      "$ref": "#/$defs/TlsConfig"
+    },
+    "tunnel": {
+      "description": "Name of a tunnel in `.spelaion/tunnels/`.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "engine"
+  ],
+  "title": "ConnectionFile",
+  "type": "object"
+}
