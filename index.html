@@ -3,113 +3,179 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Spelaion — SpelaionDB</title>
+  <title>SpelaionDB: an open-source database client | Spelaion</title>
   <meta name="description" content="SpelaionDB: an open-source desktop database client with first-class SSH tunnels and an MCP server for AI agents. PostgreSQL, MySQL, MariaDB, SQL Server, SQLite and DuckDB.">
-  <meta name="theme-color" content="#0e1729">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f1ece1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#17233f" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://spelaion.dev/">
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Spelaion">
   <meta property="og:title" content="SpelaionDB">
   <meta property="og:description" content="An open-source desktop database client with first-class SSH tunnels and an MCP server for AI agents.">
-  <meta property="og:image" content="https://spelaion.dev/icon-256.png">
+  <meta property="og:image" content="https://spelaion.dev/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://spelaion.dev/">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
+    /* The brand's colors (github.com/spelaion-dev/brand): ink, limestone and the amber of a
+       caver's lamp. The light page is the light tile, the dark page the dark tile. Flat
+       shapes only: no gradients and no shadows. */
     :root {
-      --bg: #0e1729;
-      --bg-2: #16233f;
-      --card: rgba(255, 255, 255, 0.04);
-      --line: rgba(201, 214, 238, 0.14);
-      --text: #eef3fb;
-      --muted: #9fb0cf;
-      --lamp: #ffcf5c;
-      --lamp-soft: rgba(255, 207, 92, 0.16);
-      --button-text: #1a1406;
+      --bg: #f1ece1;          /* limestone */
+      --surface: #f8f5ee;
+      --line: #ddd6c8;        /* tile edge */
+      --line-strong: #bdb5a4;
+      --text: #17233f;        /* ink */
+      --muted: #555d70;
+      --lamp: #f29d1d;        /* lamp amber */
+      --on-lamp: #17233f;
+      --code-bg: #17233f;
+      --code-text: #f1ece1;
+      --code-lamp: #ffb938;
     }
-    @media (prefers-color-scheme: light) {
+    @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #f6f8fc;
-        --bg-2: #e8eef9;
-        --card: rgba(14, 23, 41, 0.04);
-        --line: rgba(14, 23, 41, 0.12);
-        --text: #0e1729;
-        --muted: #4a5a78;
-        --lamp-soft: rgba(255, 190, 40, 0.22);
+        --bg: #17233f;        /* ink */
+        --surface: #1e2c4d;
+        --line: #2f3e63;
+        --line-strong: #4a5a82;
+        --text: #f1ece1;      /* limestone */
+        --muted: #b5b0a6;
+        --lamp: #ffb938;      /* lamp amber, bright */
+        --code-bg: #101a31;
       }
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     html, body { margin: 0; }
     body {
       min-height: 100vh;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI Variable", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(60rem 40rem at 85% -10%, var(--lamp-soft), transparent 60%),
-        linear-gradient(180deg, var(--bg-2), var(--bg) 55%);
+      background: var(--bg);
       line-height: 1.55;
       display: flex;
       flex-direction: column;
     }
-    a { color: inherit; }
-    .wrap { width: 100%; max-width: 64rem; margin: 0 auto; padding: 0 1.25rem; }
-    header { padding: 1.25rem 0; }
+    a { color: inherit; text-underline-offset: .2em; }
+    a:focus-visible, .button:focus-visible { outline: 2px solid var(--lamp); outline-offset: 3px; border-radius: 4px; }
+    img { max-width: 100%; height: auto; display: block; }
+    code { font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+    .wrap { width: 100%; max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+    section[id] { scroll-margin-top: 1.5rem; }
+
+    header { padding: 1.1rem 0; }
     header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-    .brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; letter-spacing: .02em; text-decoration: none; }
-    .brand img { width: 2rem; height: 2rem; }
-    nav a { color: var(--muted); text-decoration: none; margin-left: 1.25rem; font-size: .95rem; }
+    .brand { display: flex; align-items: center; gap: .55rem; font-weight: 600; font-size: 1.1rem; letter-spacing: .01em; text-decoration: none; }
+    .brand picture { flex: none; }
+    .brand img { width: 2.25rem; height: 2.25rem; }
+    nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem 1.4rem; }
+    nav a { color: var(--muted); text-decoration: none; font-size: .95rem; }
     nav a:hover { color: var(--text); }
+
     main { flex: 1; }
-    .hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 3rem; align-items: center; padding-top: 4rem; padding-bottom: 3rem; }
-    .eyebrow { display: inline-block; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--lamp); border: 1px solid var(--line); border-radius: 999px; padding: .25rem .7rem; }
-    h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.05; margin: 1rem 0 1rem; letter-spacing: -.02em; }
-    h1 .lamp { color: var(--lamp); }
-    .lead { font-size: 1.15rem; color: var(--muted); max-width: 34rem; margin: 0 0 2rem; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 3rem; align-items: center; padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .eyebrow { display: inline-flex; align-items: center; gap: .5rem; font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    .eyebrow::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--lamp); }
+    h1 { font-size: clamp(2.3rem, 5.2vw, 3.7rem); font-weight: 600; line-height: 1.06; margin: 1rem 0; letter-spacing: -.025em; text-wrap: balance; }
+    h1 .lamp { text-decoration: underline; text-decoration-color: var(--lamp); text-decoration-thickness: .1em; text-underline-offset: .14em; }
+    .lead { font-size: 1.15rem; color: var(--muted); max-width: 35rem; margin: 0 0 1.75rem; }
     .actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
     .button {
       display: inline-flex; align-items: center; gap: .55rem;
-      background: var(--lamp); color: var(--button-text);
-      font-weight: 700; text-decoration: none; padding: .85rem 1.3rem; border-radius: .7rem;
-      box-shadow: 0 .5rem 1.5rem rgba(255, 207, 92, .25);
-      transition: transform .12s ease, box-shadow .12s ease;
+      background: var(--lamp); color: var(--on-lamp); border: 1px solid var(--lamp);
+      font-weight: 600; text-decoration: none; padding: .8rem 1.25rem; border-radius: .6rem;
+      transition: transform .12s ease;
     }
-    .button:hover { transform: translateY(-1px); box-shadow: 0 .7rem 1.8rem rgba(255, 207, 92, .35); }
-    .button.secondary { background: transparent; color: var(--text); border: 1px solid var(--line); box-shadow: none; }
-    .button.secondary:hover { border-color: var(--muted); }
-    .button svg { width: 1.1rem; height: 1.1rem; }
+    .button:hover { transform: translateY(-1px); }
+    .button.secondary { background: transparent; color: var(--text); border-color: var(--line-strong); }
+    .button.secondary:hover { border-color: var(--text); }
+    .button svg { width: 1.1rem; height: 1.1rem; flex: none; }
     .meta { margin-top: .9rem; font-size: .9rem; color: var(--muted); min-height: 1.4em; }
-    .meta a { color: var(--muted); }
-    .others { margin-top: .4rem; font-size: .9rem; color: var(--muted); }
-    .others a { color: var(--muted); margin-right: .9rem; }
     .art { display: flex; justify-content: center; }
-    .art img { width: min(18rem, 70vw); height: auto; filter: drop-shadow(0 1.5rem 3rem rgba(0, 0, 0, .35)); }
-    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding-top: 1rem; padding-bottom: 3rem; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 1rem; padding: 1.25rem; }
-    .card h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
+    .art img { width: min(19rem, 70vw); }
+
+    .shot { padding-bottom: 4rem; }
+    .shot picture { display: block; border: 1px solid var(--line-strong); border-radius: .75rem; overflow: hidden; background: var(--surface); }
+    .shot p { margin: .75rem 0 0; color: var(--muted); font-size: .9rem; text-align: center; }
+
+    .section { border-top: 1px solid var(--line); padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    h2 { margin: 0 0 .5rem; font-size: clamp(1.5rem, 3vw, 1.9rem); font-weight: 600; letter-spacing: -.015em; }
+    .intro { margin: 0 0 2rem; color: var(--muted); max-width: 40rem; }
+    h3 { margin: 0 0 .35rem; font-size: 1.05rem; font-weight: 600; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: .75rem; padding: 1.25rem; }
     .card p { margin: 0; color: var(--muted); font-size: .95rem; }
-    .family { border-top: 1px solid var(--line); padding-top: 2.5rem; padding-bottom: 3rem; }
-    .family h2 { margin: 0 0 1rem; font-size: 1.4rem; }
-    .products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    .product { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-    .badge { font-size: .75rem; font-weight: 700; padding: .2rem .55rem; border-radius: 999px; white-space: nowrap; }
-    .badge.now { background: var(--lamp); color: var(--button-text); }
-    .badge.soon { border: 1px solid var(--line); color: var(--muted); }
+    .card p + p { margin-top: .6rem; }
+    .card a { color: var(--text); }
+    .engines { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; margin: 2rem 0 0; }
+    .engines li { border: 1px solid var(--line-strong); border-radius: 999px; padding: .2rem .8rem; font-size: .9rem; }
+
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
+    .checks { list-style: none; padding: 0; margin: 0; }
+    .checks li { position: relative; padding-left: 1.4rem; margin-bottom: .6rem; color: var(--muted); }
+    .checks li::before { content: ""; position: absolute; left: 0; top: .5em; width: .6rem; height: .6rem; border-radius: 50%; background: var(--lamp); }
+    .terminal { background: var(--code-bg); color: var(--code-text); border: 1px solid var(--line); border-radius: .75rem; padding: 1.1rem 1.25rem; font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace; font-size: .9rem; overflow-x: auto; }
+    .terminal pre { margin: 0; font: inherit; }
+    .terminal .dim { color: #b5b0a6; }
+    .terminal .lamp { color: var(--code-lamp); }
+    .after-terminal { margin: .75rem 0 0; color: var(--muted); font-size: .9rem; }
+
+    .links { list-style: none; padding: 0; margin: 0 0 .8rem; display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
+    .links a { font-weight: 600; }
+    .note { margin: 1.5rem 0 0; color: var(--muted); font-size: .95rem; max-width: 46rem; }
+
+    .products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .product { display: flex; align-items: center; gap: 1rem; }
+    .product img { width: 4.5rem; height: 4.5rem; flex: none; }
+    .product div { flex: 1; min-width: 0; }
+    .badge { font-size: .75rem; font-weight: 600; padding: .2rem .6rem; border-radius: 999px; white-space: nowrap; }
+    .badge.now { background: var(--lamp); color: var(--on-lamp); }
+    .badge.soon { border: 1px solid var(--line-strong); color: var(--muted); }
+
     footer { border-top: 1px solid var(--line); padding: 1.5rem 0; color: var(--muted); font-size: .85rem; }
     footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; }
-    footer a { color: var(--muted); }
-    @media (max-width: 52rem) {
-      .hero { grid-template-columns: 1fr; padding-top: 2rem; gap: 2rem; }
-      .art { order: -1; }
-      .art img { width: 9rem; }
-      .features, .products { grid-template-columns: 1fr; }
-      nav a { margin-left: .9rem; }
+
+    @media (max-width: 56rem) {
+      .hero { grid-template-columns: minmax(0, 1fr); padding-top: 1.5rem; padding-bottom: 2.5rem; gap: 1.5rem; }
+      .art { order: -1; justify-content: flex-start; }
+      .art img { width: 7rem; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .split { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+      .section { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+    }
+    @media (max-width: 38rem) {
+      .grid, .products { grid-template-columns: minmax(0, 1fr); }
+      .product { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+      .product .badge { grid-column: 2; justify-self: start; }
+      nav .wide { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .button { transition: none; }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <a class="brand" href="/"><img src="icon.svg" alt="" width="32" height="32">Spelaion</a>
-      <nav>
+      <a class="brand" href="/">
+        <picture>
+          <source srcset="logos/spelaion-dark.svg" media="(prefers-color-scheme: dark)">
+          <img src="logos/spelaion-light.svg" alt="" width="36" height="36">
+        </picture>
+        Spelaion
+      </a>
+      <nav aria-label="Main">
+        <a class="wide" href="#features">Features</a>
+        <a class="wide" href="#agents">AI agents</a>
+        <a href="#install">Install</a>
         <a href="https://github.com/spelaion-dev/spelaiondb">GitHub</a>
-        <a href="https://github.com/spelaion-dev/spelaiondb/releases">Releases</a>
       </nav>
     </div>
   </header>
@@ -121,8 +187,7 @@
         <h1>Explore your databases, <span class="lamp">wherever they hide</span>.</h1>
         <p class="lead">
           SpelaionDB is a fast desktop database client with first-class SSH tunnels and an MCP
-          server for AI agents. PostgreSQL, MySQL, MariaDB, SQL Server, SQLite and DuckDB.
-          The website is coming soon; the app is ready to try.
+          server for AI agents. For Windows, macOS and Linux.
         </p>
         <div class="actions">
           <a class="button" id="download" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">
@@ -131,31 +196,132 @@
           </a>
           <a class="button secondary" href="https://github.com/spelaion-dev/spelaiondb">View on GitHub</a>
         </div>
-        <div class="meta" id="meta">Free and open source, under the Apache License 2.0.</div>
-        <div class="others" id="others" hidden></div>
+        <div class="meta" id="meta">Free and open source, under the Apache License 2.0. <a href="#install">All downloads</a>.</div>
       </div>
-      <div class="art"><img src="icon.svg" alt="The SpelaionDB logo: a database lit by a caver's lamp" width="288" height="288"></div>
-    </section>
-
-    <section class="wrap features" aria-label="Features">
-      <div class="card">
-        <h3>SSH tunnels that just work</h3>
-        <p>Through any number of bastions, with agents, keys, passwords or 2FA, and Kubernetes too.</p>
-      </div>
-      <div class="card">
-        <h3>Safe AI agents</h3>
-        <p>An MCP server that reads through read-only barriers and writes only where you allow it.</p>
-      </div>
-      <div class="card">
-        <h3>Made for teams</h3>
-        <p>Connections shared through git without passwords, reviewed when they change.</p>
+      <div class="art">
+        <picture>
+          <source srcset="logos/spelaiondb-dark.svg" media="(prefers-color-scheme: dark)">
+          <img src="logos/spelaiondb-light.svg" alt="The SpelaionDB logo: a database whose top disc is a σ lit by a caver's lamp" width="304" height="304">
+        </picture>
       </div>
     </section>
 
-    <section class="wrap family" aria-label="The Spelaion family">
+    <section class="wrap shot" aria-label="Screenshot">
+      <picture>
+        <source srcset="screenshots/plan-dark.png" media="(prefers-color-scheme: dark)">
+        <img src="screenshots/plan-light.png" width="1400" height="900" alt="SpelaionDB with a PostgreSQL connection open: a query in the editor and, below it, its execution plan as a tree with the cost and rows of each step">
+      </picture>
+      <p>A query and its execution plan, step by step.</p>
+    </section>
+
+    <section class="wrap section" id="features">
+      <h2>What it does</h2>
+      <p class="intro">A workbench for the hours you spend reading names, SQL and data: an explorer, an editor and a grid that holds millions of rows.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>SSH tunnels that just work</h3>
+          <p>Through any number of bastions, with an SSH agent, keys, passwords or 2FA. Kubernetes port-forwards and SOCKS or HTTP proxies too.</p>
+        </div>
+        <div class="card">
+          <h3>Safe AI agents</h3>
+          <p>A built-in MCP server. Agents read behind read-only barriers, write only where you allow it, and every call is recorded on your computer.</p>
+        </div>
+        <div class="card">
+          <h3>Made for teams</h3>
+          <p>Connections are plain files shared through git, never with a password inside. One that changes with a pull is not used until you have reviewed it.</p>
+        </div>
+        <div class="card">
+          <h3>Execution plans you can read</h3>
+          <p>Explain a query on every engine and read its plan as an overview, a tree, a graph or the raw output, with findings that explain each problem.</p>
+        </div>
+        <div class="card">
+          <h3>Data in and out</h3>
+          <p>Edit rows in the grid and apply them in one transaction. Import CSV, TSV, JSON and Markdown tables, and export results of any size.</p>
+        </div>
+        <div class="card">
+          <h3>A net under your slips</h3>
+          <p>A <code>DELETE</code> without <code>WHERE</code>, a <code>DROP</code> or anything that writes to production asks before it runs. Read-only connections never change.</p>
+        </div>
+      </div>
+      <ul class="engines" aria-label="Supported databases">
+        <li>PostgreSQL</li>
+        <li>MySQL</li>
+        <li>MariaDB</li>
+        <li>SQL Server</li>
+        <li>SQLite</li>
+        <li>DuckDB</li>
+      </ul>
+    </section>
+
+    <section class="wrap section" id="agents">
+      <div class="split">
+        <div>
+          <h2>For AI agents</h2>
+          <p class="intro">SpelaionDB is also an MCP server, so an agent can use the connections you choose, tunnels included, without ever seeing a password.</p>
+          <ul class="checks">
+            <li>Agents reach only the connections you expose to them.</li>
+            <li>They only read, unless you let a connection take writes: one statement at a time, each in its own transaction.</li>
+            <li><code>DROP</code>, <code>TRUNCATE</code> and a <code>DELETE</code> or <code>UPDATE</code> without <code>WHERE</code> are always refused.</li>
+            <li>One switch makes every agent read-only, and every call, run or refused, is recorded on your computer.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="terminal" role="group" aria-label="Adding SpelaionDB to Claude Code">
+            <pre><span class="dim"># Add it to Claude Code</span>
+<span class="lamp">$</span> claude mcp add spelaiondb -- spelaiondb mcp</pre>
+          </div>
+          <p class="after-terminal">Or let the app do it: its MCP server page sets it up in Claude Desktop, Claude Code, Codex, Cursor, Windsurf and Antigravity, showing the change before it makes it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap section" id="install">
+      <h2>Install</h2>
+      <p class="intro" id="install-intro">The installers of the latest release. The app tells you when there is a new version, and installs it only when you ask.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>Windows</h3>
+          <ul class="links">
+            <li><a data-asset="_x64-setup\.exe$" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">Installer (.exe)</a></li>
+            <li><a data-asset="\.msi$" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">.msi</a></li>
+          </ul>
+          <p>The installer needs no admin rights. It is not signed yet: if SmartScreen asks, choose “More info” and then “Run anyway”.</p>
+        </div>
+        <div class="card">
+          <h3>macOS</h3>
+          <ul class="links">
+            <li><a data-asset="_aarch64\.dmg$" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">Apple Silicon (.dmg)</a></li>
+            <li><a data-asset="_x64\.dmg$" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">Intel (.dmg)</a></li>
+          </ul>
+          <p>The app is not notarized yet: the first time, right-click it and choose “Open”.</p>
+        </div>
+        <div class="card">
+          <h3>Linux</h3>
+          <ul class="links">
+            <li><a data-asset="\.AppImage$" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">AppImage</a></li>
+            <li><a data-asset="\.deb$" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">.deb</a></li>
+            <li><a data-asset="\.rpm$" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">.rpm</a></li>
+          </ul>
+          <p>For x86-64. Only the AppImage updates itself.</p>
+        </div>
+      </div>
+      <p class="note">
+        Coming from another client? SpelaionDB imports your connections from DBeaver, DataGrip,
+        TablePlus, HeidiSQL, MySQL Workbench, pgAdmin and Beekeeper Studio. The installers
+        include the <code>spelaiondb</code> command, the CLI and MCP server; on its own it is in the
+        <a id="release-link" href="https://github.com/spelaion-dev/spelaiondb/releases/latest">release's archives</a>.
+      </p>
+    </section>
+
+    <section class="wrap section" id="family">
       <h2>The Spelaion family</h2>
+      <p class="intro">Spelaion comes from σπήλαιον, Greek for “cave”. Every product carries the σ the name starts with and, inside it, the amber of a caver's lamp.</p>
       <div class="products">
         <div class="card product">
+          <picture>
+            <source srcset="logos/spelaiondb-dark.svg" media="(prefers-color-scheme: dark)">
+            <img src="logos/spelaiondb-light.svg" alt="" width="72" height="72" loading="lazy">
+          </picture>
           <div>
             <h3>SpelaionDB</h3>
             <p>Desktop database client with SSH tunnels and an MCP server.</p>
@@ -163,6 +329,10 @@
           <span class="badge now">Available</span>
         </div>
         <div class="card product">
+          <picture>
+            <source srcset="logos/spelaionssh-dark.svg" media="(prefers-color-scheme: dark)">
+            <img src="logos/spelaionssh-light.svg" alt="" width="72" height="72" loading="lazy">
+          </picture>
           <div>
             <h3>SpelaionSSH</h3>
             <p>Manage your SSH connections, tunnels and keys.</p>
@@ -175,20 +345,19 @@
 
   <footer>
     <div class="wrap">
-      <span>σπήλαιον: Greek for “cave”.</span>
+      <span>Free and open source, under the Apache License 2.0.</span>
       <span><a href="https://github.com/spelaion-dev">GitHub</a> · <a href="mailto:contact@spelaion.dev">contact@spelaion.dev</a></span>
     </div>
   </footer>
 
   <script>
-    // The download button points at the installer for this visitor's system, taken from the
-    // latest release. Without JavaScript, or if GitHub cannot be reached, it opens the latest
-    // release's page instead.
+    // The download links point at the latest release's installers, and the main button at the
+    // one for this visitor's system. Without JavaScript, or if GitHub cannot be reached, they
+    // all open the latest release's page instead.
     (async () => {
       const button = document.getElementById("download");
       const label = document.getElementById("download-label");
       const meta = document.getElementById("meta");
-      const others = document.getElementById("others");
 
       const ua = navigator.userAgent;
       let os = "other";
@@ -216,45 +385,34 @@
         return;
       }
 
-      const version = (release.tag_name || "").replace(/^v/, "");
       const assets = release.assets || [];
-      const find = (test) => assets.find((a) => test.test(a.name));
-      const link = (asset, text) => `<a href="${asset.browser_download_url}">${text}</a>`;
+      const find = (pattern) => assets.find((a) => new RegExp(pattern).test(a.name));
+
+      // Each link of the Install section names its file with a pattern.
+      for (const a of document.querySelectorAll("a[data-asset]")) {
+        const asset = find(a.dataset.asset);
+        if (asset) a.href = asset.browser_download_url;
+      }
+      if (release.html_url) document.getElementById("release-link").href = release.html_url;
 
       const picks = {
-        windows: { asset: find(/_x64-setup\.exe$/), text: "Download for Windows" },
-        macArm: { asset: find(/_aarch64\.dmg$/), text: "Download for macOS (Apple Silicon)" },
-        macIntel: { asset: find(/_x64\.dmg$/), text: "Download for macOS (Intel)" },
-        linux: { asset: find(/\.AppImage$/), text: "Download for Linux (AppImage)" },
+        windows: ["_x64-setup\\.exe$", "Download for Windows"],
+        macArm: ["_aarch64\\.dmg$", "Download for macOS (Apple Silicon)"],
+        macIntel: ["_x64\\.dmg$", "Download for macOS (Intel)"],
+        linux: ["\\.AppImage$", "Download for Linux (AppImage)"],
       };
-
-      let main = null;
-      const extra = [];
-      if (os === "windows") {
-        main = picks.windows;
-        const msi = find(/\.msi$/);
-        if (msi) extra.push(link(msi, ".msi installer"));
-      } else if (os === "mac") {
-        main = arch === "x86" ? picks.macIntel : picks.macArm;
-        const other = main === picks.macArm ? picks.macIntel : picks.macArm;
-        if (other.asset) extra.push(link(other.asset, other === picks.macIntel ? "Intel Mac" : "Apple Silicon Mac"));
-      } else if (os === "linux") {
-        main = picks.linux;
-        const deb = find(/\.deb$/);
-        const rpm = find(/\.rpm$/);
-        if (deb) extra.push(link(deb, ".deb"));
-        if (rpm) extra.push(link(rpm, ".rpm"));
+      const pick = os === "mac" ? (arch === "x86" ? picks.macIntel : picks.macArm) : picks[os];
+      const asset = pick && find(pick[0]);
+      if (asset) {
+        button.href = asset.browser_download_url;
+        label.textContent = pick[1];
       }
 
-      if (main && main.asset) {
-        button.href = main.asset.browser_download_url;
-        label.textContent = main.text;
-      }
-      extra.push(`<a href="${release.html_url}">All downloads</a>`);
-      others.innerHTML = extra.join("");
-      others.hidden = false;
-      if (version) {
-        meta.innerHTML = `Version ${version} · <a href="${release.html_url}">release notes</a> · free and open source (Apache-2.0).`;
+      const version = (release.tag_name || "").replace(/^v/, "");
+      if (version && release.html_url) {
+        const notes = Object.assign(document.createElement("a"), { href: release.html_url, textContent: "release notes" });
+        const all = Object.assign(document.createElement("a"), { href: "#install", textContent: "all downloads" });
+        meta.replaceChildren(`Version ${version} · `, notes, " · ", all, " · free and open source (Apache-2.0).");
       }
     })();
   </script>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Spelaion on the dark tile: the same shapes as spelaion-light.svg with ink and limestone
+       swapped and a brighter lamp. -->
+  <rect x="32" y="32" width="960" height="960" rx="216" fill="#17233f"/>
+  <circle cx="424" cy="512" r="200" fill="none" stroke="#f1ece1" stroke-width="104"/>
+  <path d="M424 312 H792" fill="none" stroke="#f1ece1" stroke-width="104" stroke-linecap="round"/>
+  <circle cx="424" cy="512" r="68" fill="#ffb938"/>
+</svg>

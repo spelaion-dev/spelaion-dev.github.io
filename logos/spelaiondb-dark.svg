@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- SpelaionDB on the dark tile: the same shapes as spelaiondb-light.svg with ink and limestone
+       swapped and a brighter lamp. -->
+  <rect x="32" y="32" width="960" height="960" rx="216" fill="#17233f"/>
+  <path d="M184 372 A288 160 0 0 0 760 372 V512 A288 160 0 0 1 184 512 Z" fill="#f1ece1"/>
+  <path d="M184 556 A288 160 0 0 0 760 556 V696 A288 160 0 0 1 184 696 Z" fill="#f1ece1"/>
+  <ellipse cx="472" cy="328" rx="240" ry="112" fill="#ffb938" stroke="#f1ece1" stroke-width="96"/>
+  <path d="M472 216 H792" fill="none" stroke="#f1ece1" stroke-width="96" stroke-linecap="round"/>
+</svg>

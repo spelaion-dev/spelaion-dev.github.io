@@ -3,22 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Not found — Spelaion</title>
+  <title>Not found | Spelaion</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f1ece1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#17233f" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <style>
-    :root { --bg: #0e1729; --text: #eef3fb; --muted: #9fb0cf; --lamp: #ffcf5c; }
-    @media (prefers-color-scheme: light) { :root { --bg: #f6f8fc; --text: #0e1729; --muted: #4a5a78; } }
+    /* The brand's colors, as in index.html. */
+    :root { --bg: #f1ece1; --text: #17233f; --muted: #555d70; --lamp: #f29d1d; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #17233f; --text: #f1ece1; --muted: #b5b0a6; --lamp: #ffb938; } }
     body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--text);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; text-align: center; padding: 1.25rem; }
-    img { width: 6rem; height: 6rem; }
-    h1 { margin: 1rem 0 .5rem; }
-    p { color: var(--muted); }
-    a { color: var(--lamp); }
+      font-family: system-ui, -apple-system, "Segoe UI Variable", "Segoe UI", Roboto, sans-serif; text-align: center; padding: 1.25rem; }
+    img { width: 7rem; height: 7rem; margin: 0 auto; display: block; }
+    h1 { margin: 1rem 0 .5rem; font-weight: 600; letter-spacing: -.015em; }
+    p { color: var(--muted); margin: 0; }
+    a { color: var(--text); text-decoration-color: var(--lamp); text-decoration-thickness: .1em; text-underline-offset: .2em; }
   </style>
 </head>
 <body>
   <main>
-    <img src="/icon.svg" alt="">
+    <picture>
+      <source srcset="/logos/spelaion-dark.svg" media="(prefers-color-scheme: dark)">
+      <img src="/logos/spelaion-light.svg" alt="" width="112" height="112">
+    </picture>
     <h1>Lost in the cave</h1>
     <p>This page does not exist. <a href="/">Back to the entrance</a>.</p>
   </main>
