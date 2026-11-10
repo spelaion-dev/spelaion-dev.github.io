@@ -59,6 +59,55 @@
       ],
       "type": "object"
     },
+    "ProxyConfig": {
+      "additionalProperties": false,
+      "description": "A tunnel's proxy (ADR-027).",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reference to the secret, never the value, as for hops. Only with `user`."
+        },
+        "port": {
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "type": {
+          "$ref": "#/$defs/ProxyType",
+          "description": "`socks5` (the proxy resolves the target's name) or `http` (`CONNECT`)."
+        },
+        "user": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "host",
+        "port"
+      ],
+      "type": "object"
+    },
+    "ProxyType": {
+      "enum": [
+        "socks5",
+        "http"
+      ],
+      "type": "string"
+    },
     "SecretSpec": {
       "additionalProperties": false,
       "description": "Reference to a secret. Accepted forms:\n`keychain`, `keychain:<name>`, `env:<VARIABLE>`, `op://<vault>/<item>/<field>`,\n`cmd:<command>` and `prompt` (asked when connecting).",
@@ -86,12 +135,50 @@
   "additionalProperties": false,
   "description": "An SSH tunnel: `.spelaion/tunnels/<name>.toml`.",
   "properties": {
+    "connect_timeout": {
+      "description": "Seconds each hop may take to answer and finish the SSH handshake (authentication,\nwhich may wait for the person, is not counted). 15 when absent.",
+      "format": "uint32",
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
     "hops": {
-      "description": "Hops in order; the last one is the one that reaches the database.",
+      "description": "Hops in order; the last one is the one that reaches the database. None with a proxy\nthat reaches the database alone.",
       "items": {
         "$ref": "#/$defs/HopConfig"
       },
       "type": "array"
+    },
+    "keepalive_count": {
+      "description": "Unanswered keep-alives before the tunnel is closed as down (`ServerAliveCountMax`). 3\nwhen absent; 0 never gives up.",
+      "format": "uint32",
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "keepalive_interval": {
+      "description": "Seconds without hearing from a server before sending it an SSH keep-alive (OpenSSH's\n`ServerAliveInterval`), so a NAT or firewall does not drop an idle tunnel. 15 when\nabsent; 0 sends none.",
+      "format": "uint32",
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "proxy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProxyConfig"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "A SOCKS5 or HTTP proxy (ADR-027): the first hop is reached through it or, with no\nhops, it reaches the database itself."
     },
     "schema_version": {
       "format": "uint32",
@@ -100,8 +187,7 @@
     }
   },
   "required": [
-    "schema_version",
-    "hops"
+    "schema_version"
   ],
   "title": "TunnelFile",
   "type": "object"
